@@ -23,7 +23,7 @@ Em seu `bower.json` mude as seguintes linhas:
 Feito isso agora rode o comando:
 
 ```bash
-$ ember g adapter application
+$ bower install
 ```
 
 Pronto! Ember e Ember data devem estar atualizados, verifique no seu Ember inspector.
