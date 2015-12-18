@@ -22,3 +22,15 @@ test('I see all cars on the index page', (assert) => {
     assert.equal(cars.length, 1);
   });
 });
+
+test('I can add a new car', function(assert){
+  server.createList('car', 10); visit('/cars');
+
+  click('#add-car'); fillIn('input[name="car-name"]', 'My new car');
+  click('button');
+
+  andThen(() => {
+    const newCar = find('li.car:contains("My new car")');
+    assert.equal(newCar.text().trim(), "My new car");
+  });
+});
