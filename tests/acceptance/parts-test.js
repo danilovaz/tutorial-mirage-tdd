@@ -14,3 +14,16 @@ test('when I click a car, I see its parts', (assert) => {
     assert.equal(find('.part').length, parts.length);
   });
 });
+
+test('I can add a new part to a car', (assert) => {
+  server.create('car');
+  visit('/cars');
+  click('.car-link');
+  click('.new-part');
+
+  fillIn('input[name="part-name"]', "My new part");
+  click('button');
+  andThen(() => {
+    assert.equal(find('.part').text().trim(), "My new part");
+  });
+});

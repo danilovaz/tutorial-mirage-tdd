@@ -12,6 +12,7 @@ Router.map(function() {
 
   this.route('car', { path: '/car/:id'}, function() {
     this.route('parts', {});
+    this.route('new-part');
   });
 });
 
