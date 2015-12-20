@@ -2,7 +2,7 @@
 
 Quando desenvolvemos uma aplicacão client side em JavaScript, nem sempre teremos uma API disponível antes de começar. Mesmo quando fazemos faz isso não queremos nossos dependendo de uma API que ainda não está pronta.
 
-Felizmente, há uma ótima solução para  "tocar"(`stubbing`) sua API enquanto constrói sua Ember app: [Ember CLI Mirage](http://www.ember-cli-mirage.com/). Mirage funciona perfeitamente quando `Ember Data` está esperando uma API REST, mas há uma conversão manual que deve ser feita se você quer consumir uma API JSON como eu tive que assim fazer recentemente em um projeto.
+Felizmente, há uma ótima solução para "tocar" (`stubbing`) sua API enquanto constrói sua Ember app: [Ember CLI Mirage](http://www.ember-cli-mirage.com/). Mirage funciona perfeitamente quando `Ember Data` está esperando uma API REST, mas há uma conversão manual que deve ser feita se você quer consumir uma API JSON como eu tive que assim fazer recentemente em um projeto.
 
 <hr/>
 
@@ -325,7 +325,7 @@ Cars/Index
 Rode os testes, ele deve pasar.
 
 <hr/>
-### Adding New Cars
+### Adicionando novos Carros
 
 Agora que nossos `cars` estão testados e funcionando, nós precisamos ser capazes de adicionar mais carros para nossa coleção. Vamos fazer um teste.
 
@@ -684,7 +684,107 @@ Parts
 ```
 E agora nosso tesde deve passar.
 
-Vou deixar a conversão de `part` em um componente com um teste de integração como exercicio para voce completar. Os passos são os mesmos como eram para carros.
+Vou deixar a conversão de `part` em um componente com um teste de integração como exercicio para você completar. Os passos são os mesmos como eram para carros.
+
+<hr/>
+### Adicionando Partes
+
+Nosso último teste cobrirá a adição de parts. Na parte inferior do seu teste de aceitação:
+
+```javascript
+//tests/acceptance/parts.js
+
+test('I can add a new part to a car', (assert) => {
+  server.create('car');
+  visit('/cars');
+  click('.car-link');
+  click('.new-part');
+
+  fillIn('input[name="part-name"]', "My new part");
+  click('button');
+  andThen(() => {
+    assert.equal(find('.part').text().trim(), "My new part");
+  });
+});
+```
+
+Nosso teste diz que nós não temos um link '.new-part' em nosso template:
+```html
+
+Parts
+<!-- car/parts.hbs -->
+<ul>
+  {{model.name}}
+  {{#each model.parts as |part|}}
+    <li class='part'>
+      {{part.name}}
+    </li>
+  {{/each}}
+</ul>
+
+{{#link-to 'car.new-part' model class='new-part'}}
+  Add new Part
+{{/link-to}}
+```
+
+```bash
+$ ember g route car/new-part
+```
+
+Agora nós precissamos de uma rota 'car.new-part'.
+```javascript
+//router.js
+Router.map(function() {
+  this.route('cars', function() {
+    this.route('new', {});
+  });
+
+  this.route('car', { path: '/car/:id' }, function(){
+    this.route('parts', {});
+    this.route('new-part', {});
+  });
+});
+```
+
+E um template prar nossa rota renderizar.
+```html
+<!--templates/car/new-part-->
+New Part
+
+<form {{action 'newPart' name on='submit'}}>
+  {{input name='part-name' value=name}}
+  <button> Create Part </button>
+</form>
+```
+
+```javascript
+//routes/car/new-part.js
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  actions: {
+    newPart(name){
+      const car = this.modelFor('car');
+      const part = this.store.createRecord('part', { name, car });
+      part.save().then(() => {
+        this.transitionTo('car.parts', car);
+      });
+    }
+  }
+});
+```
+E um Mirage endpoint:
+
+```javascript
+this.post('parts', (db, request) => {
+  return JSON.parse(request.requestBody);
+});
+```
+E está pronto! Você pode ver o código deste tutorial em https://github.com/villander/tutorial-mirage-tdd.
+<hr/>
+1. [JSON API](http://jsonapi.org/)
+2. [Ember CLI Mirage](http://www.ember-cli-mirage.com/)
+
 
 
 
