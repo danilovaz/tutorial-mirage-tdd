@@ -2,5 +2,5 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
   name: DS.attr('string'),
-  parts: DS.hasMany('part')
+  car: DS.belongsTo('car')
 });
