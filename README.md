@@ -1,4 +1,8 @@
-# ember-cli-mirage usando TDD.
+# TDD usando ember-cli mirage.
+
+Tradução do [artigo](http://hashrocket.com/blog/posts/test-driving-a-stubbed-api-in-ember-with-ember-cli-mirage) do [Jason Cummings](https://twitter.com/jasoncummings86)
+
+## Veja o [tutorial](tutorial.md)
 
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
